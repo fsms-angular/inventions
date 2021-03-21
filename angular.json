@@ -120,28 +120,39 @@
         }
       }
     },
-    "example-e2e": {
-      "root": "apps/example-e2e",
-      "sourceRoot": "apps/example-e2e/src",
-      "projectType": "application",
+    "pubsub": {
+      "projectType": "library",
+      "root": "libs/pubsub",
+      "sourceRoot": "libs/pubsub/src",
+      "prefix": "inventions",
       "architect": {
-        "e2e": {
-          "builder": "@nrwl/cypress:cypress",
+        "build": {
+          "builder": "@nrwl/angular:package",
           "options": {
-            "cypressConfig": "apps/example-e2e/cypress.json",
-            "tsConfig": "apps/example-e2e/tsconfig.e2e.json",
-            "devServerTarget": "example:serve"
+            "tsConfig": "libs/pubsub/tsconfig.lib.json",
+            "project": "libs/pubsub/ng-package.json"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "example:serve:production"
+              "tsConfig": "libs/pubsub/tsconfig.lib.prod.json"
             }
           }
         },
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/example-e2e/**/*.{js,ts}"]
+            "lintFilePatterns": [
+              "libs/pubsub/src/**/*.ts",
+              "libs/pubsub/src/**/*.html"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/pubsub"],
+          "options": {
+            "jestConfig": "libs/pubsub/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }
