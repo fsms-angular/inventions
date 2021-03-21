@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@fsms-angular/pubsub": ["libs/pubsub/src/index.ts"]
+      "@fsms-angular/pubsub": ["libs/pubsub/src/index.ts"],
+      "@fsms-angular/utils": ["libs/utils/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -17,6 +17,7 @@
   },
   "projects": {
     "example": { "tags": [] },
-    "pubsub": { "tags": ["type: core", "scope: pubsub"] }
+    "pubsub": { "tags": ["type: core", "scope: pubsub"] },
+    "utils": { "tags": ["type: utils", "scope:utils"] }
   }
 }
