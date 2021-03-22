@@ -20,8 +20,9 @@ export interface Subscriber {
   order: number;
 }
 
-export interface SubscriberInfo extends Subscriber {
+export interface Subscription extends Subscriber {
   subscriberId: string;
+  unsubscribe: () => boolean;
 }
 
 export interface UnsubscribeInfo {
@@ -31,40 +32,49 @@ export interface UnsubscribeInfo {
 
 @Injectable({ providedIn: 'root' })
 export class PubsubService {
-  subscriptions;
-  constructor() {
-    this.subscriptions = {};
-  }
+  private subscriptions = new Map<string, Map<string, Subscription>>();
 
   publish() {}
 
-  subscribe(subscriber: Subscriber): string {
-    const { topic } = subscriber;
+  subscribe(newSubscriber: Subscriber) {
+    const { topic } = newSubscriber;
 
     this.assertTopic(topic, 'create');
 
-    const callbacks = this.subscriptions[topic];
+    const subscribers = this.subscriptions.get(topic);
 
-    if (!callbacks) {
-      this.subscriptions[topic] = [];
+    if (!subscribers) {
+      this.createNewEmptySubscriptions(topic);
     }
 
-    return this.subscribeInOrder(topic, subscriber);
+    return this.addSubscription(topic, newSubscriber);
   }
 
   unsubscribe(topic: string) {
     this.assertTopic(topic, 'remove');
+
+    const subscribers = this.subscriptions.get(topic);
+
+    if (!subscribers) return true;
+
+    this.createNewEmptySubscriptions(topic);
   }
 
-  private subscribeInOrder(topic: string, subscriber: Subscriber) {
-    const id = uniqueId();
-    (subscriber as SubscriberInfo).subscriberId = id;
-    this.subscriptions[topic].push(subscriber);
-    this.subscriptions[topic].sort(
-      (a: { order: number }, b: { order: number }) => a.order - b.order
+  private createNewEmptySubscriptions(topic: string) {
+    this.subscriptions.set(topic, new Map());
+  }
+
+  private addSubscription(topic: string, subscriber: Subscriber): Subscription {
+    const subscriptionId = uniqueId();
+    const newSubscription = subscriber as Subscription;
+    newSubscription.subscriberId = subscriptionId;
+    this.subscriptions[topic].set(subscriptionId, newSubscription);
+
+    this.subscriptions[topic] = new Map(
+      [...this.subscriptions[topic]].sort((a, b) => a.order - b.order)
     );
 
-    return `${topic}-${id}`;
+    return newSubscription;
   }
 
   private assertTopic(topic: string, action: string) {
