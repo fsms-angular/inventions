@@ -1,40 +1,20 @@
-import { Injectable } from '@angular/core';
+import { Inject } from '@angular/core';
 import { uniqueId } from '@fsms-angular/utils';
-import { Message } from './message';
+import { Message } from '../contracts/message';
+import { Subscriber } from '../contracts/subscriber';
+import { Subscription } from '../contracts/Subscription';
 
-export type Callback = (message: Message) => void;
-
-/**
- * @description
- *
- * Subscription Info
- */
-export interface Subscriber {
-  topic: string;
-  context: unknown;
-  callback: Callback;
-  /**
-   * @description
-   * order to execute. order 1 will execute earlier than order 2.
-   */
-  order: number;
-}
-
-export interface Subscription extends Subscriber {
-  subscriberId: string;
-  unsubscribe: () => boolean;
-}
-
-export interface UnsubscribeInfo {
-  topic: string;
-  callback: Callback;
-}
-
-@Injectable({ providedIn: 'root' })
+@Inject({ providedIn: 'root' })
 export class PubsubService {
   private subscriptions = new Map<string, Map<string, Subscription>>();
 
-  publish() {}
+  publish(message: Message) {
+    const subscribers = this.subscriptions.get(message.messageType);
+    for (const [, subscriber] of subscribers) {
+      // eslint-disable-next-line prefer-rest-params
+      subscriber.callback.call(subscriber.context, arguments);
+    }
+  }
 
   subscribe(newSubscriber: Subscriber) {
     const { topic } = newSubscriber;
@@ -50,14 +30,24 @@ export class PubsubService {
     return this.addSubscription(topic, newSubscriber);
   }
 
-  unsubscribe(topic: string) {
+  unsubscribe({
+    topic,
+    subscriptionId,
+  }: {
+    topic: string;
+    subscriptionId?: string;
+  }) {
     this.assertTopic(topic, 'remove');
 
     const subscribers = this.subscriptions.get(topic);
 
     if (!subscribers) return true;
 
-    this.createNewEmptySubscriptions(topic);
+    if (subscriptionId) {
+      subscribers.delete(subscriptionId);
+    } else {
+      this.createNewEmptySubscriptions(topic);
+    }
   }
 
   private createNewEmptySubscriptions(topic: string) {
@@ -73,6 +63,8 @@ export class PubsubService {
     this.subscriptions[topic] = new Map(
       [...this.subscriptions[topic]].sort((a, b) => a.order - b.order)
     );
+
+    newSubscription.unsubscribe = this.unsubscribe.bind(this);
 
     return newSubscription;
   }
