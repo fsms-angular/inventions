@@ -8,11 +8,11 @@ import { Callback } from './callback';
 
 export interface Subscriber {
   topic: string;
-  context: unknown;
+  context?: unknown | null;
   callback: Callback;
   /**
    * @description
    * order to execute. order 1 will execute earlier than order 2.
    */
-  order: number;
+  order?: number | 0;
 }

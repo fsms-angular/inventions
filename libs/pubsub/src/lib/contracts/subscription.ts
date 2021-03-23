@@ -1,7 +1,6 @@
-import { Subscriber } from "./subscriber";
-
+import { Subscriber } from './subscriber';
 
 export interface Subscription extends Subscriber {
   subscriberId: string;
-  unsubscribe: () => boolean;
+  unsubscribe: (options: { topic: string; subscriptionId?: string }) => boolean;
 }

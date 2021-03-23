@@ -6,7 +6,7 @@ import { Subscription } from '../contracts/Subscription';
 
 @Inject({ providedIn: 'root' })
 export class PubsubService {
-  private subscriptions = new Map<string, Map<string, Subscription>>();
+  protected subscriptions = new Map<string, Map<string, Subscription>>();
 
   publish(message: Message) {
     const subscribers = this.subscriptions.get(message.messageType);
@@ -41,13 +41,15 @@ export class PubsubService {
 
     const subscribers = this.subscriptions.get(topic);
 
-    if (!subscribers) return true;
+    if (!subscribers) return false;
 
     if (subscriptionId) {
       subscribers.delete(subscriptionId);
     } else {
       this.createNewEmptySubscriptions(topic);
     }
+
+    return true;
   }
 
   private createNewEmptySubscriptions(topic: string) {
@@ -58,10 +60,12 @@ export class PubsubService {
     const subscriptionId = uniqueId();
     const newSubscription = subscriber as Subscription;
     newSubscription.subscriberId = subscriptionId;
-    this.subscriptions[topic].set(subscriptionId, newSubscription);
+    this.subscriptions.get(topic).set(subscriptionId, newSubscription);
 
     this.subscriptions[topic] = new Map(
-      [...this.subscriptions[topic]].sort((a, b) => a.order - b.order)
+      [...this.subscriptions.get(topic)].sort(
+        ([, a], [, b]) => a.order - b.order
+      )
     );
 
     newSubscription.unsubscribe = this.unsubscribe.bind(this);
