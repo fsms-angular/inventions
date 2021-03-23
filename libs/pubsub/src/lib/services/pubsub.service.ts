@@ -4,6 +4,8 @@ import { Message } from '../contracts/message';
 import { Subscriber } from '../contracts/subscriber';
 import { Subscription } from '../contracts/Subscription';
 
+export const DEFAULT_ORDER = 15;
+
 @Inject({ providedIn: 'root' })
 export class PubsubService {
   protected subscriptions = new Map<string, Map<string, Subscription>>();
@@ -60,6 +62,8 @@ export class PubsubService {
     const subscriptionId = uniqueId();
     const newSubscription = subscriber as Subscription;
     newSubscription.subscriberId = subscriptionId;
+    newSubscription.order = newSubscription.order || DEFAULT_ORDER;
+
     this.subscriptions.get(topic).set(subscriptionId, newSubscription);
 
     this.subscriptions[topic] = new Map(
@@ -68,7 +72,7 @@ export class PubsubService {
       )
     );
 
-    newSubscription.unsubscribe = this.unsubscribe.bind(this);
+    newSubscription.unsubscribe = () => this.unsubscribe({topic, subscriptionId});
 
     return newSubscription;
   }

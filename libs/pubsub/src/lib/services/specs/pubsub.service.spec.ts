@@ -69,10 +69,15 @@ describe('PubSub service', () => {
       });
     });
     it('can unusbscribe by subscription ojbect', () => {
-      expect(subscription.unsubscribe({ topic })).toBeTruthy();
+      expect(subscription.unsubscribe()).toBeTruthy();
     });
 
     it('should have one subscriber', () => {
+      expect(pubsubService['subscriptions'].get(topic).size).toBe(1);
+    });
+
+    it('can unsubscribe', () => {
+      subscription.unsubscribe();
       expect(pubsubService['subscriptions'].get(topic).size).toBe(0);
     });
   });
