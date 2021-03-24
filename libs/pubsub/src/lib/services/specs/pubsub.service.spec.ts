@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { Subscription } from '../../contracts/subscription';
+import { PubsubSubscription } from '../../contracts/subscription';
 import { PubsubModule } from '../../pubsub.module';
 import { PubsubService } from '../pubsub.service';
 
@@ -60,7 +60,7 @@ describe('PubSub service', () => {
 
   describe('unsubscribe', () => {
     const callback = jasmine.createSpy('callback');
-    let subscription: Subscription;
+    let subscription: PubsubSubscription;
     const topic = '[sales] order paid';
     beforeEach(() => {
       subscription = pubsubService.subscribe({
