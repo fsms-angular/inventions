@@ -80,5 +80,28 @@ describe('PubSub service', () => {
       subscription.unsubscribe();
       expect(pubsubService['subscriptions'].get(topic).size).toBe(0);
     });
+
+    it('can unsubscribe all subscribers for the topic', () => {
+      pubsubService.unsubscribeAll();
+
+      pubsubService.subscribe({
+        callback: (msg) => console.log(`1. ${msg.messageType}`),
+        topic,
+      });
+      pubsubService.subscribe({
+        callback: (msg) => console.log(`2. ${msg.messageType}`),
+        topic,
+      });
+      pubsubService.subscribe({
+        callback: (msg) => console.log(`3. ${msg.messageType}`),
+        topic,
+      });
+
+      expect(pubsubService['subscriptions'].get(topic).size).toBe(3);
+
+      pubsubService.unsubscribe({ topic });
+
+      expect(pubsubService['subscriptions'].get(topic).size).toBe(0);
+    });
   });
 });

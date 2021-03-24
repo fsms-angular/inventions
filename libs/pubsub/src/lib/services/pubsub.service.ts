@@ -1,16 +1,16 @@
 import { Inject } from '@angular/core';
 import { uniqueId } from '@fsms-angular/utils';
 import { Message } from '../contracts/message';
-import { Subscriber } from '../contracts/subscriber';
-import { Subscription } from '../contracts/Subscription';
+import { PubsubSubscriber } from '../contracts/subscriber';
+import { PubsubSubscription } from '../contracts/Subscription';
 
 export const DEFAULT_ORDER = 15;
 
 @Inject({ providedIn: 'root' })
 export class PubsubService {
-  protected subscriptions = new Map<string, Map<string, Subscription>>();
+  protected subscriptions = new Map<string, Map<string, PubsubSubscription>>();
 
-  publish(message: Message) {
+  publish(message: Message): void {
     const subscribers = this.subscriptions.get(message.messageType);
     for (const [, subscriber] of subscribers) {
       // eslint-disable-next-line prefer-rest-params
@@ -18,7 +18,11 @@ export class PubsubService {
     }
   }
 
-  subscribe(newSubscriber: Subscriber) {
+  unsubscribeAll() {
+    this.subscriptions.clear();
+  }
+
+  subscribe(newSubscriber: PubsubSubscriber): PubsubSubscription {
     const { topic } = newSubscriber;
 
     this.assertTopic(topic, 'create');
@@ -58,9 +62,9 @@ export class PubsubService {
     this.subscriptions.set(topic, new Map());
   }
 
-  private addSubscription(topic: string, subscriber: Subscriber): Subscription {
+  private addSubscription(topic: string, subscriber: PubsubSubscriber): PubsubSubscription {
     const subscriptionId = uniqueId();
-    const newSubscription = subscriber as Subscription;
+    const newSubscription = subscriber as PubsubSubscription;
     newSubscription.subscriberId = subscriptionId;
     newSubscription.order = newSubscription.order || DEFAULT_ORDER;
 
@@ -72,7 +76,8 @@ export class PubsubService {
       )
     );
 
-    newSubscription.unsubscribe = () => this.unsubscribe({topic, subscriptionId});
+    newSubscription.unsubscribe = () =>
+      this.unsubscribe({ topic, subscriptionId });
 
     return newSubscription;
   }

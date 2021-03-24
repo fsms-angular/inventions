@@ -6,7 +6,7 @@ import { Callback } from './callback';
  * Subscription Info
  */
 
-export interface Subscriber {
+export interface PubsubSubscriber {
   topic: string;
   context?: unknown | null;
   callback: Callback;

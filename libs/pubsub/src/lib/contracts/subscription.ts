@@ -1,6 +1,6 @@
-import { Subscriber } from './subscriber';
+import { PubsubSubscriber } from './subscriber';
 
-export interface Subscription extends Subscriber {
+export interface PubsubSubscription extends PubsubSubscriber {
   subscriberId: string;
   unsubscribe: () => boolean;
 }
