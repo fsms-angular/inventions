@@ -1,6 +1,6 @@
 # Angular PubSub
-
-Angular 11.x implementation of the [publish subscribe](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) Pattern.
+![](https://imgur.com/TPpJEFa.png)
+Angular 11.x implementation of the [publish subscribe](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) Pattern. It is a messaging service which can publish-subscribe topics.  
 
 <!-- Angular Badges-->
 
@@ -26,7 +26,8 @@ Angular 11.x implementation of the [publish subscribe](https://en.wikipedia.org/
 
 <!-- Dependency and Socials Badges-->
 
-> By [Rupesh Tiwari](https://rupeshtiwari.com) > <img src="https://i.imgur.com/9OCLciM.png" width="100" height="30">
+> By [Rupesh Tiwari](https://rupeshtiwari.com) 
+> <img src="https://i.imgur.com/9OCLciM.png" width="100" height="30">
 
 **If you enjoy @fsms-angular/pubsub, please consider pressing the star button on [my repo](https://github.com/fsms-angular/inventions) & [supporting me](https://github.com/sponsors/rupeshtiwari) for years of development (and to unlock rewards!) ❤**
 
@@ -35,7 +36,9 @@ Angular 11.x implementation of the [publish subscribe](https://en.wikipedia.org/
 **Table of Contents**
 
 - [Angular PubSub](#angular-pubsub)
-  - [Installing @fsms-angular/pubsub](#installing-fsms-angularpubsub)
+  - [Why Pub/Sub in Angular?](#why-pubsub-in-angular)
+  - [Installation](#installation)
+  - [Concepts and terminology](#concepts-and-terminology)
     - [Message](#message)
     - [Angular Pub/Sub Service](#angular-pubsub-service)
   - [Using Angular PubSub Service](#using-angular-pubsub-service)
@@ -48,7 +51,15 @@ Angular 11.x implementation of the [publish subscribe](https://en.wikipedia.org/
 
 ---
 
-## Installing @fsms-angular/pubsub
+## Why Pub/Sub in Angular?
+
+1. Safely routing and **transferring data** and control across service and application boundaries. 
+2. **Transfer minimum stable data** such as order id, order type in `Message` object.
+3. Improve reliability and **scalability of libraries and services**. 
+4. Create **loose coupled architecture**. Separate Angular components with Services using message. 
+5. **Create as many services** allowing them to subscribe same message and do different work. Example: Order Created Message can be subscribed by pricing service to create pricing data. Sales service can create order and other service can do some other business logic. 
+
+## Installation 
 
 **npm installation**
 
@@ -57,6 +68,10 @@ npm i -S @fsms-angular/pubsub
 ```
 
 You need `Message` class to create your messages and you need `PubsubService` to publish or subscribe messages.
+
+## Concepts and terminology
+
+
 
 ### Message
 
