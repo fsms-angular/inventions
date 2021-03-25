@@ -1,22 +1,171 @@
-# Node.js with Angular
-# Build a Node.js project that uses Angular.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+# Trigger CI automatically whenever main branch is changed
+name: FSMS Angular Inventions CI Pipeline
+pool:
+  vmImage: "ubuntu-latest"
+
+strategy:
+  matrix:
+    node_14_x:
+      node_version: 14.x
+    # node_14_x:
+    # node_version: 14.x
+
+variables:
+  AUTH_NPMTOKEN: $(NPM_TOKEN) # Mapping secret var
+  AUTH_GHTOKEN: $(GH_TOKEN) # Mapping secret var
+  IS_PULLREQUEST: $[eq(variables['Build.Reason'], 'PullRequest')]
+  NPM_CACHE_DIR: $(PIPELINE_CACHE_DIR) # $(Build.SourcesDirectory)/node_modules
+  CAN_SKIP_NX_CACHE: $[eq(variables['CAN_SKIP_NX_CACHE'], 'True')]
 
 trigger:
-- master
-
-pool:
-  vmImage: ubuntu-latest
+  - main
 
 steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '10.x'
-  displayName: 'Install Node.js'
+  - task: NodeTool@0
+    inputs:
+      versionSpec: $(node_version)
 
-- script: |
-    npm install -g @angular/cli
-    npm install
-    ng build --prod
-  displayName: 'npm install and build'
+  - task: Cache@2 # Cache Node packages on build agent
+    displayName: "Cache npm Dependencies"
+    inputs:
+      key: "**/package-lock.json, !**/node_modules/**/package-lock.json, !**/.*/**/package-lock.json"
+      path: $(NPM_CACHE_DIR)
+      cacheHitVar: CacheRestored
+
+    # Runing NPM CI only install node packages if package-lock.json changed
+  - task: Npm@1
+    displayName: 'NPM CI'
+    inputs:
+      command: ci
+      verbose: false
+    condition: ne(variables['CacheRestored'], 'true')
+
+    # Creating Nx COMMANDS
+  - powershell: |
+      Write-Host "##vso[task.setvariable variable=COMMANDS]$(node ./tools/scripts/generate-nx-commands.js $(IS_PULLREQUEST) $(CAN_SKIP_NX_CACHE))"
+    displayName: Creating Nx Commands
+
+    # Displaying Nx Commands
+  - script: echo $(COMMANDS)
+    name: echoCommands
+    displayName: Displaying Nx Commands
+
+    # Linting Projects
+  - script: node ./tools/scripts/run-nx-commands.js '$(COMMANDS)' lint
+    enabled: false
+    displayName: Linting Projects
+    condition: |
+      and(
+        succeeded(),
+        not(contains(
+            variables['COMMANDS'],
+            '"lint":[]'
+        ))
+      )
+
+    # Testing Projects
+  - script: node ./tools/scripts/run-nx-commands.js '$(COMMANDS)' test
+    enabled: true
+    displayName: Testing Projects
+    condition: |
+      and(
+        succeeded(),
+        not(contains(
+            variables['COMMANDS'],
+            '"test":[]'
+        ))
+      )
+
+    # Publish Test Results
+  - task: PublishTestResults@2
+    enabled: false
+    displayName: Publish Test Results
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: '**/testresults/**/*.xml'
+      mergeTestResults: true
+    condition: |
+      and(
+        succeeded(),
+        not(contains(
+            variables['COMMANDS'],
+            '"test":[]'
+        ))
+      )
+
+    # Publish Code Coverage Results
+  - task: PublishCodeCoverageResults@1
+    enabled: false
+    displayName: Publish Code Coverage
+    inputs:
+      codeCoverageTool: 'Cobertura'
+      summaryFileLocation: '$(Build.SourcesDirectory)/coverage/merged/merged-cobertura-coverage.xml'
+    condition: |
+      and(
+        succeeded(),
+        not(contains(
+            variables['COMMANDS'],
+            '"test":[]'
+        ))
+      )
+
+    # Building Projects
+  - script: node ./tools/scripts/run-nx-commands.js '$(COMMANDS)' build
+    enabled: true
+    displayName: Building Projects
+    condition: |
+      and(
+        succeeded(),
+        not(contains(
+            variables['COMMANDS'],
+            '"build":[]'
+        ))
+      )
+
+  # Update the Patch version of npm package before publishing
+  - script: |
+      export newVersion=$(node ./tools/scripts/update-npm-version.js '$(COMMANDS)' '$(Build.BuildId)')
+      echo "##vso[task.setvariable variable=newVersion]$newVersion"
+    enabled: true
+    displayName: Updating NPM Version
+    condition: |
+      and(
+        succeeded(),
+        not(contains(
+          variables['COMMANDS'],
+          '"publish":[]'
+        )),
+        ne(variables['IS_PULLREQUEST'], 'true')
+      )
+
+  # Update Pipeline Build Number
+  - script: |
+      echo "Using npm package version to update pipeline build number"
+      echo "##vso[build.updatebuildnumber]$(newVersion)-$(Build.SourceBranchName)"
+    enabled: true
+    displayName: Update Build Number
+    condition: |
+      and(
+        succeeded(),
+        not(contains(
+          variables['COMMANDS'],
+          '"publish":[]'
+        )),
+        ne(variables['IS_PULLREQUEST'], 'true')
+      )
+
+  # If Not Pull Request Then Publish Apps to NPM with new Patch Version
+  - script: |
+      echo "publishing to npm repository"
+      node ./tools/scripts/publish-npm.js '$(COMMANDS)'
+    enabled: true
+    displayName: Publish NPM
+    condition: |
+      and(
+        succeeded(),
+        not(contains(
+          variables['COMMANDS'],
+          '"publish":[]'
+        )),
+        ne(variables['IS_PULLREQUEST'], 'true')
+      )

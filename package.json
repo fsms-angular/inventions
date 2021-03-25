@@ -25,7 +25,8 @@
     "update": "nx migrate latest",
     "workspace-generator": "nx workspace-generator",
     "dep-graph": "nx dep-graph",
-    "help": "nx help"
+    "help": "nx help",
+    "test:prod":"nx affected:test --collect-coverage --sourceMap=false"
   },
   "private": true,
   "dependencies": {
