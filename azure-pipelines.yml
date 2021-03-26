@@ -17,7 +17,7 @@ variables:
   CAN_SKIP_NX_CACHE: $[eq(variables['CAN_SKIP_NX_CACHE'], 'True')]
 
 trigger:
-  - main
+  - master
 
 steps:
   - task: NodeTool@0
@@ -81,7 +81,7 @@ steps:
     displayName: Publish Test Results
     inputs:
       testResultsFormat: 'JUnit'
-      testResultsFiles: '**/testresults/**/*.xml'
+      testResultsFiles: '**/test_results/jest-junit.xml'
       mergeTestResults: true
     condition: |
       and(
