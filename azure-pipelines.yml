@@ -11,8 +11,7 @@ strategy:
     # node_version: 14.x
 
 variables:
-  AUTH_NPMTOKEN: $(NPM_TOKEN) # Mapping secret var
-  AUTH_GHTOKEN: $(GH_TOKEN) # Mapping secret var
+  AUTH_NPMTOKEN: $(NPM_TOKEN) # NPM auth token to publish package to npm registry
   IS_PULLREQUEST: $[eq(variables['Build.Reason'], 'PullRequest')]
   NPM_CACHE_DIR: $(PIPELINE_CACHE_DIR) # $(Build.SourcesDirectory)/node_modules
   CAN_SKIP_NX_CACHE: $[eq(variables['CAN_SKIP_NX_CACHE'], 'True')]
@@ -157,7 +156,7 @@ steps:
   # If Not Pull Request Then Publish Apps to NPM with new Patch Version
   - script: |
       echo "publishing to npm repository"
-      node ./tools/scripts/publish-npm.js '$(COMMANDS)'
+      node ./tools/scripts/publish-npm.js '$(COMMANDS)' '$(AUTH_NPMTOKEN)'
     enabled: true
     displayName: Publish NPM
     condition: |

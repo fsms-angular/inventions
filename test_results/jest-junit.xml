@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Angular Inventions Tests" tests="13" failures="0" errors="0" time="3.443">
+  <testsuite name="uniqueid" errors="0" failures="0" skipped="0" timestamp="2021-03-26T18:29:51" time="1.166" tests="1">
+    <testcase classname="uniqueid should create create uniqueue id" name="uniqueid should create create uniqueue id" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="PubSub service" errors="0" failures="0" skipped="0" timestamp="2021-03-26T18:29:51" time="1.223" tests="9">
+    <testcase classname="PubSub service should be defined" name="PubSub service should be defined" time="0.017">
+    </testcase>
+    <testcase classname="PubSub service subscribe should have subscription" name="PubSub service subscribe should have subscription" time="0.003">
+    </testcase>
+    <testcase classname="PubSub service subscribe should have one subscriber" name="PubSub service subscribe should have one subscriber" time="0.003">
+    </testcase>
+    <testcase classname="PubSub service subscribe Again subscribe to the same topic should have subscription" name="PubSub service subscribe Again subscribe to the same topic should have subscription" time="0.003">
+    </testcase>
+    <testcase classname="PubSub service subscribe Again subscribe to the same topic should have one subscriber" name="PubSub service subscribe Again subscribe to the same topic should have one subscriber" time="0.002">
+    </testcase>
+    <testcase classname="PubSub service unsubscribe can unusbscribe by subscription ojbect" name="PubSub service unsubscribe can unusbscribe by subscription ojbect" time="0.002">
+    </testcase>
+    <testcase classname="PubSub service unsubscribe should have one subscriber" name="PubSub service unsubscribe should have one subscriber" time="0.003">
+    </testcase>
+    <testcase classname="PubSub service unsubscribe can unsubscribe" name="PubSub service unsubscribe can unsubscribe" time="0.002">
+    </testcase>
+    <testcase classname="PubSub service unsubscribe can unsubscribe all subscribers for the topic" name="PubSub service unsubscribe can unsubscribe all subscribers for the topic" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="AppComponent" errors="0" failures="0" skipped="0" timestamp="2021-03-26T18:29:51" time="1.243" tests="3">
+    <testcase classname="AppComponent should create the app" name="AppComponent should create the app" time="0.057">
+    </testcase>
+    <testcase classname="AppComponent should have as title &apos;example&apos;" name="AppComponent should have as title &apos;example&apos;" time="0.013">
+    </testcase>
+    <testcase classname="AppComponent should render title" name="AppComponent should render title" time="0.011">
+    </testcase>
+  </testsuite>
+</testsuites>
