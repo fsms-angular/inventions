@@ -1,7 +1,7 @@
 # Trigger CI automatically whenever main branch is changed
 name: FSMS Angular Inventions CI Pipeline
 pool:
-  vmImage: "windows-latest"
+  vmImage: "ubuntu-latest"
 
 strategy:
   matrix:
