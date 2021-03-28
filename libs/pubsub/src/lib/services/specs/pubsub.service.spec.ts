@@ -8,7 +8,6 @@ describe('PubSub service', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [PubsubModule],
-      providers: [PubsubService],
     }).compileComponents();
 
     pubsubService = TestBed.inject(PubsubService);

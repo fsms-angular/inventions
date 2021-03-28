@@ -1,5 +1,6 @@
 import { Inject } from '@angular/core';
 import { uniqueId } from '@fsms-angular/utils';
+import { LoggerService } from '../contracts/logger';
 import { Message } from '../contracts/message';
 import { PubsubSubscriber } from '../contracts/subscriber';
 import { PubsubSubscription } from '../contracts/Subscription';
@@ -9,6 +10,8 @@ export const DEFAULT_ORDER = 15;
 @Inject({ providedIn: 'root' })
 export class PubsubService {
   protected subscriptions = new Map<string, Map<string, PubsubSubscription>>();
+
+  constructor(public logger: LoggerService) {}
 
   publish(message: Message): void {
     const subscribers = this.subscriptions.get(message.messageType);
@@ -33,7 +36,11 @@ export class PubsubService {
       this.createNewEmptySubscriptions(topic);
     }
 
-    return this.addSubscription(topic, newSubscriber);
+    const subscription = this.addSubscription(topic, newSubscriber);
+
+    this.logger.log(`Subscription Success`, subscription);
+
+    return subscription;
   }
 
   unsubscribe({
@@ -62,7 +69,10 @@ export class PubsubService {
     this.subscriptions.set(topic, new Map());
   }
 
-  private addSubscription(topic: string, subscriber: PubsubSubscriber): PubsubSubscription {
+  private addSubscription(
+    topic: string,
+    subscriber: PubsubSubscriber
+  ): PubsubSubscription {
     const subscriptionId = uniqueId();
     const newSubscription = subscriber as PubsubSubscription;
     newSubscription.subscriberId = subscriptionId;

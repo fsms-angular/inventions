@@ -1,6 +1,6 @@
 const execSync = require('child_process').execSync;
 const isMaster = process.argv[2] === 'False';
-const baseSha = isMaster ? 'origin/releases/11.0~1' : 'origin/releases/11.0';
+const baseSha = isMaster ? 'origin/master~1' : 'origin/releases/11.0';
 const isSkipCache = process.argv[3] === 'True';
 
 const cmd = JSON.stringify({
@@ -23,7 +23,7 @@ function commands(target) {
 }
 
 function affectedApps(command) {
-  let script = `npx nx affected:apps --base=${baseSha}`;
+  let script = `npx nx affected:libs --base=${baseSha}`;
 
   const x = execute(script).toString().trim();
 
