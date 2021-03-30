@@ -3,10 +3,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { LoggerService, PubsubModule } from '@fsms-angular/pubsub';
 import { AppComponent } from './app.component';
+import { ShowLogComponent } from './components/show-logs.components';
 import { DomLogger } from './services/dom.logger.service';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, ShowLogComponent],
   imports: [BrowserModule, FormsModule, PubsubModule, ReactiveFormsModule],
   providers: [
     {

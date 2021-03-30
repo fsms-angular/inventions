@@ -15,12 +15,13 @@ export class AppComponent {
 
   constructor(
     public pubsubService: PubsubService,
-    public logger: LoggerService,
+
     public orderService: OrderService
   ) {
     this.pubsubService.subscribe({
       callback: this.createOrder,
       context: this,
+      name: 'Create Order Handler',
       topic: SubmitOrderCommand.messageType,
     });
   }
@@ -35,9 +36,6 @@ export class AppComponent {
     this.orderService.create({ name: cmd.name, price: cmd.price });
   }
 
-  get logs() {
-    return (this.logger as DomLogger).logs;
-  }
 
   get orders() {
     return this.orderService.orders;
