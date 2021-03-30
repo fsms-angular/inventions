@@ -29,7 +29,7 @@ export class PubsubService {
     for (const [, subscriber] of subscribers) {
       if (this.canInvoke(subscriber, message))
         this.trace(
-          `"${message.messageType}" is processed by "${
+          `"${message.messageType}"  is processed by "${
             subscriber.name || subscriber.subscriberId
           }"`
         );
@@ -40,11 +40,18 @@ export class PubsubService {
   private canInvoke(subscriber: PubsubSubscription, message: Message) {
     const finder = subscriber.context as ICanCorrelateMessage;
     if (finder.isCorrelatedBy) {
-      if (finder.isCorrelatedBy(message)) {
+      if (finder.isCorrelatedBy.call(subscriber.context, message)) {
         return true;
       } else {
         return false;
       }
+    }
+
+    if (subscriber.invokeWhen) {
+      if (subscriber.invokeWhen.call(subscriber.context, message)) {
+        return true;
+      }
+      return false;
     }
 
     return true;
@@ -71,7 +78,11 @@ export class PubsubService {
 
     const subscription = this.addSubscription(topic, newSubscriber);
 
-    this.trace(`"${topic}" is subscribed.`);
+    this.trace(
+      `"${topic}" is subscribed by ${
+        subscription.name || subscription.subscriberId
+      }`
+    );
 
     return subscription;
   }

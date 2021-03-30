@@ -9,36 +9,40 @@ import { SubmitOrderCommand } from '../messages/submit-order.command';
       <legend>
         <h2>submit order</h2>
       </legend>
-      <form required>
-        <p>
+      <form #orderForm="ngForm">
+        <p class="form-group">
           <input
             required
             type="number"
             placeholder="Enter Price To Charge"
-            ngModel
+            [(ngModel)]="orderTotal"
             name="orderTotal"
             id="orderTotal"
+            #orderTotal="ngModel"
           />
         </p>
         <p>
           <input
             required
             placeholder="Enter Customer Name"
-            ngModel
+            [(ngModel)]="name"
             name="name"
+            #name="ngModel"
             id="name"
           />
         </p>
         <p>
-          <button (click)="submitOrder()">Submit Order</button>
+          <button [disabled]="!orderForm.form.valid" (click)="submitOrder()">
+            Submit Order
+          </button>
         </p>
       </form>
     </fieldset>
   `,
 })
 export class UsingPubsubComponent {
-  orderTotal = 10;
-  name = 'Rupesh';
+  orderTotal;
+  name;
   constructor(public pubsubService: PubsubService) {}
 
   submitOrder() {

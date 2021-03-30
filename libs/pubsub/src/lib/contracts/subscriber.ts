@@ -1,4 +1,4 @@
-import { Callback } from './callback';
+import { Callback, CanInvokeCallBack } from './callback';
 
 /**
  * @description
@@ -11,6 +11,8 @@ export interface PubsubSubscriber {
   context?: unknown | null;
   callback: Callback;
   name?: string;
+  invokeWhen?: CanInvokeCallBack;
+  isDisabled?: boolean;
   /**
    * @description
    * order to execute. order 1 will execute earlier than order 2.
