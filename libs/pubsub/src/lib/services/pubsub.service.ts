@@ -1,5 +1,5 @@
 /* eslint-disable prefer-rest-params */
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { uniqueId } from '@fsms-angular/utils';
 import { ICanCorrelateMessage } from '../contracts/context';
 import { LoggerService } from '../contracts/logger';
@@ -10,10 +10,14 @@ import { PubsubSubscription } from '../contracts/Subscription';
 export const DEFAULT_ORDER = 15;
 
 @Injectable({ providedIn: 'root' })
-export class PubsubService {
+export class PubsubService implements OnDestroy{
   protected subscriptions = new Map<string, Map<string, PubsubSubscription>>();
 
-  constructor(public logger: LoggerService) {}
+  constructor(public logger: LoggerService) { }
+
+  ngOnDestroy(): void {
+    this.unsubscribeAll();
+  }
 
   publish(message: Message): void {
     const subscribers = this.subscriptions.get(message.messageType);
@@ -80,9 +84,9 @@ export class PubsubService {
     const subscription = this.addSubscription(topic, newSubscriber);
 
     this.trace(
-      `"${topic}" is subscribed by ${
+      `"${topic}" is subscribed  by "${
         subscription.name || subscription.subscriberId
-      }`
+      }" with execution order "${subscription.order}"`
     );
 
     return subscription;
