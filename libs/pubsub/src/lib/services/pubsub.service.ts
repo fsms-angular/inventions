@@ -1,4 +1,4 @@
-import { Inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { uniqueId } from '@fsms-angular/utils';
 import { LoggerService } from '../contracts/logger';
 import { Message } from '../contracts/message';
@@ -7,7 +7,7 @@ import { PubsubSubscription } from '../contracts/Subscription';
 
 export const DEFAULT_ORDER = 15;
 
-@Inject({ providedIn: 'root' })
+@Injectable({ providedIn: 'root' })
 export class PubsubService {
   protected subscriptions = new Map<string, Map<string, PubsubSubscription>>();
 
