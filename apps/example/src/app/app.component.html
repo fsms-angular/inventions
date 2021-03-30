@@ -1,8 +1,14 @@
 <fieldset>
-<legend>
- <h2> submit order </h2>
-</legend>
-<input placeholder="Enter Price To Charge" [(ngModel)]="orderTotal">
-<input placeholder="Enter Customer Name" [(ngModel)="name">
-<button (click)="submitOrder()">Submit Order</button>
+  <legend>
+    <h2> submit order </h2>
+  </legend>
+  <div>
+    <input placeholder="Enter Price To Charge" (ngModel)="orderTotal">
+  </div>
+  <div>
+    <input placeholder="Enter Customer Name" (ngModel)="name">
+  </div>
+  <div>
+    <button (click)="submitOrder()">Submit Order</button>
+  </div>
 </fieldset>
