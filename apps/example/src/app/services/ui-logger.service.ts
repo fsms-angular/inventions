@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { DefaultLoggerService } from '@fsms-angular/pubsub';
 
 @Injectable({ providedIn: 'root' })
-export class DomLogger extends DefaultLoggerService {
+export class UiLogger extends DefaultLoggerService {
   logs = [];
   error(message?: any, ...optionalParams: any[]): void {
     this.logs.push(message);

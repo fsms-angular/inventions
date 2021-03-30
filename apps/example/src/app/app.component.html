@@ -1,28 +1,5 @@
-<fieldset>
-  <legend>
-    <h2> submit order </h2>
-  </legend>
-  <form required>
-    <p>
-      <input required type="number" placeholder="Enter Price To Charge" ngModel name="orderTotal" id="orderTotal">
-    </p>
-    <p>
-      <input required placeholder="Enter Customer Name" ngModel name="name" id="name">
-    </p>
-    <p>
-      <button (click)="submitOrder()" >Submit Order</button>
-    </p>
-  </form>
-</fieldset>
-<fieldset>
-  <legend>
-    <h2>Orders</h2>
-  </legend>
-  <ul>
-    <li *ngFor="let order of orders">
-      {{ order.name }} - ${{ order.price}}
-    </li>
-  </ul>
-</fieldset>
+<inventions-using-pubsub></inventions-using-pubsub>
+
+<inventions-product-orders></inventions-product-orders>
 
 <inventions-show-logs></inventions-show-logs>

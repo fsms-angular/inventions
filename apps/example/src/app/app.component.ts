@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import { LoggerService, PubsubService } from '@fsms-angular/pubsub';
+import { PubsubService } from '@fsms-angular/pubsub';
 import { SubmitOrderCommand } from './messages/submit-order.command';
-import { DomLogger } from './services/dom.logger.service';
 import { OrderService } from './services/order.service';
 
 @Component({
@@ -10,8 +9,7 @@ import { OrderService } from './services/order.service';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  orderTotal = 10;
-  name = 'Rupesh';
+
 
   constructor(
     public pubsubService: PubsubService,
@@ -26,18 +24,9 @@ export class AppComponent {
     });
   }
 
-  submitOrder() {
-    this.pubsubService.publish(
-      new SubmitOrderCommand(this.orderTotal, this.name)
-    );
-  }
-
   createOrder(cmd: SubmitOrderCommand) {
     this.orderService.create({ name: cmd.name, price: cmd.price });
   }
 
 
-  get orders() {
-    return this.orderService.orders;
-  }
 }

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { LoggerService } from '@fsms-angular/pubsub';
-import { DomLogger } from '../services/dom.logger.service';
+import { UiLogger } from '../services/ui-logger.service';
 
 @Component({
   selector: 'inventions-show-logs',
@@ -20,6 +20,6 @@ import { DomLogger } from '../services/dom.logger.service';
 export class ShowLogComponent {
   constructor(public logger: LoggerService) {}
   get logs() {
-    return (this.logger as DomLogger).logs;
+    return (this.logger as UiLogger).logs;
   }
 }
