@@ -18,7 +18,6 @@ import { SubmitOrderCommand } from '../messages/submit-order.command';
             [(ngModel)]="orderTotal"
             name="orderTotal"
             id="orderTotal"
-            #orderTotal="ngModel"
           />
         </p>
         <p>
@@ -27,7 +26,6 @@ import { SubmitOrderCommand } from '../messages/submit-order.command';
             placeholder="Enter Customer Name"
             [(ngModel)]="name"
             name="name"
-            #name="ngModel"
             id="name"
           />
         </p>
@@ -41,8 +39,8 @@ import { SubmitOrderCommand } from '../messages/submit-order.command';
   `,
 })
 export class UsingPubsubComponent {
-  orderTotal;
-  name;
+  orderTotal = null;
+  name = null;
   constructor(public pubsubService: PubsubService) {}
 
   submitOrder() {

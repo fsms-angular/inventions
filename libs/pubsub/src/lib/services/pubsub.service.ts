@@ -27,13 +27,14 @@ export class PubsubService {
     );
 
     for (const [, subscriber] of subscribers) {
-      if (this.canInvoke(subscriber, message))
+      if (this.canInvoke(subscriber, message)) {
         this.trace(
           `"${message.messageType}"  is processed by "${
             subscriber.name || subscriber.subscriberId
           }"`
         );
-      subscriber.callback.apply(subscriber.context, arguments);
+        subscriber.callback.apply(subscriber.context, arguments);
+      }
     }
   }
 

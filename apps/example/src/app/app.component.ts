@@ -18,6 +18,7 @@ export class AppComponent {
     this.pubsubService.subscribe({
       callback: this.createOrder,
       context: this,
+      order: 2,
       name: 'Create Order Handler',
       topic: SubmitOrderCommand.messageType,
     });
@@ -25,6 +26,7 @@ export class AppComponent {
     this.pubsubService.subscribe({
       callback: this.createBigOrder,
       invokeWhen: this.isBigOrder,
+      order:1,
       context: this,
       name: 'Create Big Order Handler',
       topic: SubmitOrderCommand.messageType,
@@ -42,12 +44,11 @@ export class AppComponent {
   }
 
   createBigOrder(cmd: SubmitOrderCommand) {
-    this.logger.log(`Handling Big Order $${cmd.price}`);
-    this.orderService.create({ name: cmd.name, price: cmd.price });
+    this.logger.log(`AppComponent: Expediting Big Order $${cmd.price}`);
   }
 
   createOrder(cmd: SubmitOrderCommand) {
-    this.logger.log(`Handling Small Order $${cmd.price}`);
+    this.logger.log(`AppComponent: Handling Small Order $${cmd.price}`);
 
     this.orderService.create({ name: cmd.name, price: cmd.price });
   }
