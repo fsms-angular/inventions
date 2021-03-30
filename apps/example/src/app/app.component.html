@@ -2,13 +2,36 @@
   <legend>
     <h2> submit order </h2>
   </legend>
-  <div>
-    <input placeholder="Enter Price To Charge" (ngModel)="orderTotal">
-  </div>
-  <div>
-    <input placeholder="Enter Customer Name" (ngModel)="name">
-  </div>
-  <div>
-    <button (click)="submitOrder()">Submit Order</button>
-  </div>
+  <form required>
+    <p>
+      <input required type="number" placeholder="Enter Price To Charge" ngModel name="orderTotal" #name="ngModel">
+    </p>
+    <p>
+      <input required placeholder="Enter Customer Name" ngModel name="name">
+    </p>
+    <p>
+      <button (click)="submitOrder()">Submit Order</button>
+    </p>
+  </form>
+</fieldset>
+<fieldset>
+  <legend>
+    <h2>Orders</h2>
+  </legend>
+  <ul>
+    <li *ngFor="let order of orders">
+      {{ order.name }} - ${{ order.price}}
+    </li>
+  </ul>
+</fieldset>
+
+<fieldset>
+  <legend>
+    <h2>Log</h2>
+  </legend>
+  <ul>
+    <li *ngFor="let log of logs">
+      {{ log }}
+    </li>
+  </ul>
 </fieldset>

@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
-import { Message, PubsubService } from '@fsms-angular/pubsub';
+import { LoggerService, PubsubService } from '@fsms-angular/pubsub';
+import { SubmitOrderCommand } from './messages/submit-order.command';
+import { DomLogger } from './services/dom.logger.service';
+import { OrderService } from './services/order.service';
 
 @Component({
   selector: 'inventions-root',
@@ -7,20 +10,36 @@ import { Message, PubsubService } from '@fsms-angular/pubsub';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  orderTotal: number;
-  name: string;
-  constructor(public pubsubService: PubsubService) {}
-  submitOrder() {
-    this.pubsubService.publish(new SubmitOrder(this.orderTotal, this.name));
+  orderTotal = 10;
+  name = 'Rupesh';
+
+  constructor(
+    public pubsubService: PubsubService,
+    public logger: LoggerService,
+    public orderService: OrderService
+  ) {
+    this.pubsubService.subscribe({
+      callback: this.createOrder,
+      context: this,
+      topic: SubmitOrderCommand.messageType,
+    });
   }
-}
 
-export class SubmitOrder extends Message {
-  static messageType = '[sales] submit order';
+  submitOrder() {
+    this.pubsubService.publish(
+      new SubmitOrderCommand(this.orderTotal, this.name)
+    );
+  }
 
-  messageType = SubmitOrder.messageType;
+  createOrder(cmd: SubmitOrderCommand) {
+    this.orderService.create({ name: cmd.name, price: cmd.price });
+  }
 
-  constructor(public price: number, public name: string) {
-    super(SubmitOrder.messageType);
+  get logs() {
+    return (this.logger as DomLogger).logs;
+  }
+
+  get orders() {
+    return this.orderService.orders;
   }
 }

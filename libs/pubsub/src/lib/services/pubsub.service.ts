@@ -1,5 +1,7 @@
+/* eslint-disable prefer-rest-params */
 import { Injectable } from '@angular/core';
 import { uniqueId } from '@fsms-angular/utils';
+import { ICanCorrelateMessage } from '../contracts/context';
 import { LoggerService } from '../contracts/logger';
 import { Message } from '../contracts/message';
 import { PubsubSubscriber } from '../contracts/subscriber';
@@ -15,10 +17,36 @@ export class PubsubService {
 
   publish(message: Message): void {
     const subscribers = this.subscriptions.get(message.messageType);
-    for (const [, subscriber] of subscribers) {
-      // eslint-disable-next-line prefer-rest-params
-      subscriber.callback.call(subscriber.context, arguments);
+    if (!subscribers) {
+      this.trace(`No subscribers found for message "${message.messageType}"`);
+      return;
     }
+
+    this.trace(
+      `${subscribers.size} subscribers found for message "${message.messageType}"`
+    );
+
+    for (const [, subscriber] of subscribers) {
+      if (this.canInvoke(subscriber, message))
+        subscriber.callback.call(subscriber.context, arguments);
+    }
+  }
+
+  private canInvoke(subscriber: PubsubSubscription, message: Message) {
+    const finder = subscriber.context as ICanCorrelateMessage;
+    if (finder.isCorrelatedBy) {
+      if (finder.isCorrelatedBy(message)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  private trace(msg: string) {
+    this.logger.log(`Trace: ${msg}`);
   }
 
   unsubscribeAll() {
@@ -38,7 +66,7 @@ export class PubsubService {
 
     const subscription = this.addSubscription(topic, newSubscriber);
 
-    this.logger.log(`Subscription Success`, subscription);
+    this.trace(`"${topic}" is subscribed.`);
 
     return subscription;
   }

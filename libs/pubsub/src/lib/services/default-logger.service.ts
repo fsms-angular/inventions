@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { LoggerService } from '../contracts/logger';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class DefaultLoggerService implements LoggerService {
   error(message?: any, extra?: any) {
     if (message) {
