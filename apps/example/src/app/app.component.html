@@ -4,13 +4,13 @@
   </legend>
   <form required>
     <p>
-      <input required type="number" placeholder="Enter Price To Charge" ngModel name="orderTotal" #name="ngModel">
+      <input required type="number" placeholder="Enter Price To Charge" ngModel name="orderTotal" id="orderTotal">
     </p>
     <p>
-      <input required placeholder="Enter Customer Name" ngModel name="name">
+      <input required placeholder="Enter Customer Name" ngModel name="name" id="name">
     </p>
     <p>
-      <button (click)="submitOrder()">Submit Order</button>
+      <button (click)="submitOrder()" >Submit Order</button>
     </p>
   </form>
 </fieldset>
